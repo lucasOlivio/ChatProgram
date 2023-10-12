@@ -31,6 +31,6 @@ public:
     uint32 ReadUInt32LE();
     uint16 ReadUInt16LE(uint32 index);
     uint16 ReadUInt16LE();
-    std::string ReadString(uint32 index);
-    std::string ReadString();
+    std::string ReadString(uint32 index, uint32 strLength);
+    std::string ReadString(uint32 strLength);
 };

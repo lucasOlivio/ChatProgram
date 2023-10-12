@@ -177,7 +177,7 @@ uint32 TCPBase::DeserializeBuffer(Buffer& buffer, MSG_TYPE& msgTypeOut, uint32 i
 {
 	if (!this->m_isInitialized)
 	{
-		return;
+		return 0;
 	}
 
 	// Get header

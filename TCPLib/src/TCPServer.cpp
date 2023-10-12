@@ -83,7 +83,7 @@ void TCPServer::UpdateSocketsToRead()
     FD_SET(this->m_serverSocket, &this->m_socketsToRead);
 
     // Add all of our active connections to our sockets to read
-    for (int i = 0; i < this->m_activeSockets.fd_count; i++)
+    for (uint i = 0; i < this->m_activeSockets.fd_count; i++)
     {
         FD_SET(this->m_activeSockets.fd_array[i], &this->m_socketsToRead);
     }
