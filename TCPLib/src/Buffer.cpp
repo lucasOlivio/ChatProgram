@@ -21,7 +21,7 @@ void Buffer::WriteUInt32LE(uint32 index, uint32 value)
 
     // Now we go 8 by 8 bits setting the value in reverse
     for (unsigned int i = index; i < sizeof(value); i++) {
-        this->vecBufferData[index + i] = value >> (i * 8);
+        this->vecBufferData[i] = value >> (i * 8);
     }
 }
 
@@ -35,7 +35,7 @@ void Buffer::WriteUInt32LE(uint32 value)
     // Now we go 8 by 8 bits setting the value in reverse
     unsigned int endIndex = this->m_writeIndex + sizeof(value);
     for (unsigned int i = this->m_writeIndex; i < endIndex; i++) {
-        this->vecBufferData[this->m_writeIndex + i] = value >> (i * 8);
+        this->vecBufferData[i] = value >> (i * 8);
     }
 
     this->m_writeIndex += sizeof(value);
@@ -50,7 +50,7 @@ void Buffer::WriteUInt16LE(uint32 index, uint16 value)
 
     // Now we go 8 by 8 bits setting the value in reverse
     for (unsigned int i = index; i < sizeof(value); i++) {
-        this->vecBufferData[index + i] = value >> (i * 8);
+        this->vecBufferData[i] = value >> (i * 8);
     }
 }
 
@@ -64,7 +64,7 @@ void Buffer::WriteUInt16LE(uint16 value)
     // Now we go 8 by 8 bits setting the value in reverse
     unsigned int endIndex = this->m_writeIndex + sizeof(value);
     for (unsigned int i = this->m_writeIndex; i < endIndex; i++) {
-        this->vecBufferData[this->m_writeIndex + i] = value >> (i * 8);
+        this->vecBufferData[i] = value >> (i * 8);
     }
 
     this->m_writeIndex += sizeof(value);
@@ -98,8 +98,6 @@ void Buffer::WriteString(const std::string& value)
     {
         this->vecBufferData[this->m_writeIndex++] = value[i];
     }
-
-    this->m_writeIndex += strLength;
 }
 
 uint32 Buffer::ReadUInt32LE(uint32 index)
@@ -113,7 +111,7 @@ uint32 Buffer::ReadUInt32LE(uint32 index)
     uint32 res = this->vecBufferData[index];
 
     for (unsigned int i = index; i < sizeof(this->vecBufferData); i++) {
-        res |= this->vecBufferData[index + i] << (i * 8);
+        res |= this->vecBufferData[i] << (i * 8);
     }
 
     return res;
@@ -131,7 +129,7 @@ uint32 Buffer::ReadUInt32LE()
 
     // Reverse back 8 by 8 bits from buffer data
     for (unsigned int i = this->m_readIndex; i < endIndex; i++) {
-        res |= this->vecBufferData[this->m_readIndex + i] << (i * 8);
+        res |= this->vecBufferData[i] << (i * 8);
     }
 
     this->m_readIndex += sizeof(res);
@@ -149,7 +147,7 @@ uint16 Buffer::ReadUInt16LE(uint32 index)
     // Reverse back 8 by 8 bits from buffer data
     uint32 res = this->vecBufferData[index];
     for (unsigned int i = index; i < sizeof(this->vecBufferData); i++) {
-        res |= this->vecBufferData[index + i] << (i * 8);
+        res |= this->vecBufferData[i] << (i * 8);
     }
 
     return res;
@@ -167,7 +165,7 @@ uint16 Buffer::ReadUInt16LE()
 
     // Reverse back 8 by 8 bits from buffer data
     for (unsigned int i = this->m_readIndex; i < endIndex; i++) {
-        res |= this->vecBufferData[this->m_readIndex + i] << (i * 8);
+        res |= this->vecBufferData[i] << (i * 8);
     }
 
     this->m_readIndex += sizeof(res);

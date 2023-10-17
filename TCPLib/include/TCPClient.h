@@ -13,4 +13,9 @@ public:
 	void Destroy();
 
 	bool Connect();
+
+	// Confirms that exists a new msg from the server or not
+	bool CheckMsgFromServer();
+	// Set the amount of time in secodns to wait for a response
+	bool CheckMsgFromServer(int tv_sec);
 };

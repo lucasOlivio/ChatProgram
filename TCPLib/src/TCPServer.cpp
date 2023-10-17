@@ -4,8 +4,6 @@ TCPServer::TCPServer()
 {
     this->m_activeSockets = {};
     this->m_socketsToRead = {};
-    this->m_tv.tv_sec = 1;
-    this->m_tv.tv_usec = 0;
 }
 
 TCPServer::~TCPServer()
@@ -41,6 +39,11 @@ FD_SET& TCPServer::GetActiveSockets()
     return this->m_activeSockets;
 }
 
+FD_SET& TCPServer::GetSocketsToRead()
+{
+    return this->m_socketsToRead;
+}
+
 void TCPServer::StartListening()
 {
 	if (!this->m_isInitialized)
@@ -53,7 +56,7 @@ void TCPServer::StartListening()
 	// Binds socket to address
 	result = bind(this->m_serverSocket, this->m_pInfo->ai_addr, (int)this->m_pInfo->ai_addrlen);
 	if (result == SOCKET_ERROR) {
-		this->m_ResultError("bind", result);
+		this->m_ResultError("bind", result, true);
 		return;
 	}
 	printf("bind was successful!\n");
@@ -61,7 +64,7 @@ void TCPServer::StartListening()
 	// Start listening to any new connection
 	result = listen(this->m_serverSocket, SOMAXCONN);
 	if (result == SOCKET_ERROR) {
-		this->m_ResultError("listen", result);
+		this->m_ResultError("listen", result, true);
 		return;
 	}
 	printf("listen successful\n");
@@ -125,4 +128,43 @@ void TCPServer::AddSocket()
 
 		printf("Client connected with Socket: %d\n", (int)newConnection);
 	}
+}
+
+void TCPServer::ReadNewMsgs(std::map<SOCKET*, sPacketData*>& mapNewMsgsOut)
+{
+    // First use a non-blocking way to check which sockets have messages
+    this->UpdateSocketsToRead();
+
+    FD_SET& activeSockets = this->GetActiveSockets();
+    FD_SET& socketsToRead = this->GetSocketsToRead();
+
+    // Now loop through all the sockets with messages
+    for (int i = 0; i < activeSockets.fd_count; i++)
+    {
+        SOCKET socket = activeSockets.fd_array[i];
+        if (!FD_ISSET(socket, &socketsToRead))
+        {
+            // Socket doesn't have any msg
+            continue;
+        }
+
+        // Get the user message, along with the room id he is in
+        sPacketData* pPacketOut = new sPacketData();
+        this->ReceiveRequest(socket, *pPacketOut);
+
+        mapNewMsgsOut[&socket] = pPacketOut;
+
+        if (pPacketOut->header.packetSize == 0)
+        {
+            printf("Client disconnected from socket %d...\n", (int)socket);
+            FD_CLR(socket, &socketsToRead);
+            FD_CLR(socket, &activeSockets);
+            continue;
+        }
+
+        FD_CLR(socket, &socketsToRead);
+    }
+
+    // Now if there is any messages remaining, they are to accept new connections
+    this->AddSocket();
 }

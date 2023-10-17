@@ -4,7 +4,21 @@ int main()
 {
 	ChatServer server = ChatServer();
 
-	server.Initialize(NULL, DEFAULT_PORT);
+	bool initialized = server.Initialize(NULL, DEFAULT_PORT);
+
+	if (!initialized)
+	{
+		printf("Error initializing server!");
+		system("pause");
+		exit(EXIT_FAILURE);
+	}
+
+	while (true)
+	{
+		server.ExecuteIncommingMsgs();
+	}
+
+	server.Destroy();
 
 	return 0;
 }
