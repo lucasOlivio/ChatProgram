@@ -122,6 +122,7 @@ std::string ChatClient::ReceiveRoomMsg()
     if (newMsg.header.packetSize == 0)
     {
         // Server disconnected, so should we
+        printf("Server disconnected!\n");
         this->m_idRoom = 0;
         this->Destroy();
         return "";

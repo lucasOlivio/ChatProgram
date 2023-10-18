@@ -165,13 +165,13 @@ void ChatServer::BroadcastToRoom(uint32 idRoom, std::string username, const std:
 
 void ChatServer::ExecuteIncommingMsgs()
 {
-    std::map<SOCKET*, sPacketData*> mapNewMsgs;
+    std::map<SOCKET, sPacketData> mapNewMsgs;
     this->m_pTCP->ReadNewMsgs(mapNewMsgs);
 
-    for (std::pair<SOCKET*, sPacketData*> newMsg : mapNewMsgs)
+    for (std::pair<SOCKET, sPacketData> newMsg : mapNewMsgs)
     {
-        SOCKET clientSocket = *(newMsg.first);
-        sPacketData msgPacket = *(newMsg.second);
+        SOCKET clientSocket = newMsg.first;
+        sPacketData msgPacket = newMsg.second;
 
         if (msgPacket.header.packetSize == 0)
         {

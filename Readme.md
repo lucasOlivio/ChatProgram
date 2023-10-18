@@ -13,11 +13,11 @@ Project 1 for "Network programming" class. A chat program to send messages throu
 
 1. Extract all libs that are zipped in the "Extern/lib" folder
 2. Open the solution file in Visual Studio 2022.
-3. Running:
-    3.1. Build the "TCPLib" project first
-    3.2. Build the "ChatServer" and the "ChatClient" projects
-    3.3. Open the build folder "x64/$(Configuration)" run ChatServer.exe
-    3.4. Run ChatClient.exe
+3. First run:
+    - Build the "TCPLib" project first
+    - Build the "ChatServer" and the "ChatClient" projects
+    - Open the build folder "x64/$(Configuration)" run ChatServer.exe
+    - Run ChatClient.exe
 
 ## How to use
 

@@ -26,6 +26,14 @@ protected:
     // Deals with any results error responses from WSA
     void m_ResultError(const char* function, int result, bool isFatalError);
 
+    // Serializes message into buffer, accordingly to the message type (0 - action, 1 - chat message)
+    void m_SerializeBuffer(const myTcp::MSG_TYPE& msgType, uint32 idRoom, const std::string& username,
+        const std::string& msg, Buffer& bufferOut);
+
+    // Deserialize message from buffer returning the message type and string
+    // returns: the packet size
+    void m_DeserializeBuffer(Buffer& buffer, sPacketData& dataOut);
+
     // All wsa is initialized and socket created
     bool m_isInitialized;
 
@@ -46,15 +54,7 @@ public:
     void SendRequest(SOCKET& destSocket, const myTcp::MSG_TYPE& msgType, uint32 idRoom, 
                         const std::string& username, const std::string& msg);
 
-    // Serializes message into buffer, accordingly to the message type (0 - action, 1 - chat message)
-    void SerializeBuffer(const myTcp::MSG_TYPE& msgType, uint32 idRoom, const std::string& username,
-                            const std::string& msg, Buffer& bufferOut, int& packetSizeOut);
-
     // Deserializes message received from socket and returns the message type and string
     // returns: the packet size
     void ReceiveRequest(SOCKET& origSocket, sPacketData& dataOut);
-
-    // Deserialize message from buffer returning the message type and string
-    // returns: the packet size
-    void DeserializeBuffer(Buffer& buffer, sPacketData& dataOut);
 };

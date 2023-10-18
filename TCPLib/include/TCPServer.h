@@ -21,10 +21,6 @@ public:
 	bool Initialize(const char* host, const char* port);
 	void Destroy();
 
-	// Getters
-	FD_SET& GetActiveSockets();
-	FD_SET& GetSocketsToRead();
-
     // Bind address with socket and starts listening
     void StartListening();
 
@@ -35,5 +31,5 @@ public:
 	void AddSocket();
 
 	// Read all messages waiting on the sockets and insert in the output map
-	void ReadNewMsgs(std::map<SOCKET*, sPacketData*>& mapNewMsgsOut);
+	void ReadNewMsgs(std::map<SOCKET, sPacketData>& mapNewMsgsOut);
 };

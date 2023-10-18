@@ -34,16 +34,6 @@ void TCPServer::Destroy()
     return;
 }
 
-FD_SET& TCPServer::GetActiveSockets()
-{
-    return this->m_activeSockets;
-}
-
-FD_SET& TCPServer::GetSocketsToRead()
-{
-    return this->m_socketsToRead;
-}
-
 void TCPServer::StartListening()
 {
 	if (!this->m_isInitialized)
@@ -130,19 +120,16 @@ void TCPServer::AddSocket()
 	}
 }
 
-void TCPServer::ReadNewMsgs(std::map<SOCKET*, sPacketData*>& mapNewMsgsOut)
+void TCPServer::ReadNewMsgs(std::map<SOCKET, sPacketData>& mapNewMsgsOut)
 {
     // First use a non-blocking way to check which sockets have messages
     this->UpdateSocketsToRead();
 
-    FD_SET& activeSockets = this->GetActiveSockets();
-    FD_SET& socketsToRead = this->GetSocketsToRead();
-
     // Now loop through all the sockets with messages
-    for (int i = 0; i < activeSockets.fd_count; i++)
+    for (int i = 0; i < this->m_activeSockets.fd_count; i++)
     {
-        SOCKET socket = activeSockets.fd_array[i];
-        if (!FD_ISSET(socket, &socketsToRead))
+        SOCKET socket = this->m_activeSockets.fd_array[i];
+        if (!FD_ISSET(socket, &this->m_socketsToRead))
         {
             // Socket doesn't have any msg
             continue;
@@ -152,17 +139,15 @@ void TCPServer::ReadNewMsgs(std::map<SOCKET*, sPacketData*>& mapNewMsgsOut)
         sPacketData* pPacketOut = new sPacketData();
         this->ReceiveRequest(socket, *pPacketOut);
 
-        mapNewMsgsOut[&socket] = pPacketOut;
+        mapNewMsgsOut[socket] = *pPacketOut;
 
         if (pPacketOut->header.packetSize == 0)
         {
             printf("Client disconnected from socket %d...\n", (int)socket);
-            FD_CLR(socket, &socketsToRead);
-            FD_CLR(socket, &activeSockets);
-            continue;
+            FD_CLR(socket, &this->m_activeSockets);
         }
 
-        FD_CLR(socket, &socketsToRead);
+        FD_CLR(socket, &this->m_socketsToRead);
     }
 
     // Now if there is any messages remaining, they are to accept new connections

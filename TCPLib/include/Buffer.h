@@ -17,6 +17,9 @@ public:
     // ctors & dtors
     Buffer(uint size);
     ~Buffer();
+    
+    // Resizes the vector if index bigger that actual size
+    void CheckSize(uint32 index, uint32 valueSize);
 
     // Serializes data to the buffer vector
     void WriteUInt32LE(uint32 index, uint32 value);

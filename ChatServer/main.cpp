@@ -1,4 +1,5 @@
 #include "ChatServer.h"
+#include <conio.h>
 
 int main()
 {
@@ -13,9 +14,20 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
+	printf("Press ESC to close\n");
 	while (true)
 	{
 		server.ExecuteIncommingMsgs();
+
+		if (_kbhit())
+		{
+			int key = _getch();
+			if (key == 27) /*ESC*/
+			{
+				// Leave program
+				break;
+			}
+		}
 	}
 
 	server.Destroy();
